@@ -1,0 +1,563 @@
+All DHCP options described in RFC 2131 should be supported. To set an option in a dhcp packet you first create a dhcp packet :
+from dhcp_packet import DhcpPacket
+mypacket = DhcpPacket()
+
+Then you set an option like this :
+mypacket.SetOption('option_name',option_data)
+
+<option_data> MUST be a list of integer between 0 and 255.
+
+
+Data types
+==========
+* Single IP : 4 octets list (ex : [191.121.212.11])
+* Multiple IP : MUST be a multiple of 4 octets list (4 octets at least)
+* 32-bits : integer of 4 octets.
+* String : a list of octet interpreted as ascii characters with a minimal size of 1.
+
+
+RFC 1497 Vendor Extensions
+==========================
+* subnet_mask
+RFC code : 1
+Type : Single IP
+
+The subnet mask option specifies the client's subnet mask as per RFC 950.
+
+* time_offset
+RFC code : 2
+Type : 32-bits
+
+The time offset field specifies the offset of the client's subnet in seconds from Coordinated Universal Time (UTC).  The offset is expressed as a two's complement 32-bit integer.  A positive offset indicates a location east of the zero meridian and a negative offset indicates a location west of the zero meridian.
+
+* router_option (code 3)
+RFC code : 3
+Type : Multiple IP
+
+The router option specifies a list of IP addresses for routers on the client's subnet. Routers SHOULD be listed in order of preference.
+
+* time_server
+RFC code : 4
+Type : Multiple IP
+
+The time server option specifies a list of RFC 868 time servers available to the client. Servers SHOULD be listed in order of preference.
+
+* name_server
+RFC code : 5
+Type : Multiple IP
+
+The name server option specifies a list of IEN 116 name servers available to the client. Servers SHOULD be listed in order of preference.
+
+* domain_name_server
+RFC code : 6
+Type : Mutltiple IP
+
+The domain name server option specifies a list of Domain Name System (STD 13, RFC 1035) name servers available to the client. Servers SHOULD be listed in order of preference.
+
+* log_server
+RFC code : 7
+Type : Multiple IP
+
+The log server option specifies a list of MIT-LCS UDP log servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* cookie_server
+RFC code : 8
+Type : Multiple IP
+
+The cookie server option specifies a list of RFC 865 cookie servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* lpr_server
+RFC code : 9
+Type : Multiple IP
+
+The LPR server option specifies a list of RFC 1179 line printer servers available to the client.  Servers SHOULD be listed in order of preference.
+
+
+* impress_server
+RFC code : 10
+Type : Multiple IP
+
+The Impress server option specifies a list of Imagen Impress servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* resource_location_ server
+Code : 11
+Type : Multiple IP
+
+This option specifies a list of RFC 887 Resource Location servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* host_name
+RFC code : 12
+Type : String
+
+This option specifies the name of the client.  The name may or may not be qualified with the local domain name.  See RFC 1035 for character set restrictions.
+
+* boot_file_size
+RFC code : 13
+Type : 16-bits (unsigned integer)
+This option specifies the length in 512-octet blocks of the default boot image for the client.
+
+* merit_dump_file
+RFC code : 14
+Type : String
+
+This option specifies the path-name of a file to which the client's core image should be dumped in the event the client crashes. The path is formatted as a character string consisting of characters from the NVT ASCII character set.
+
+* domain_name
+RFC code : 15
+Type : String
+
+This option specifies the domain name that client should use when resolving hostnames via the Domain Name System.
+
+
+* swap_server
+RFC code : 16
+Type : Single IP
+
+This specifies the IP address of the client's swap server.
+
+* root_path
+RFC code : 17
+Type : String
+
+This option specifies the path-name that contains the client's root disk. The path is formatted as a character string consisting of characters from the NVT ASCII character set.
+
+* extensions_path
+RFC code : 18
+Type : String
+
+A string to specify a file, retrievable via TFTP, which contains information which can be interpreted in the same way as the 64-octet vendor-extension field within the BOOTP response, with the following exceptions:
+ - the length of the file is unconstrained;
+- all references to Tag 18 (i.e., instances of the BOOTP Extensions Path field) within the file are ignored.
+
+IP Layer Parameters per Host
+============================
+
+This section details the options that affect the operation of the IP layer on a per-host basis.
+
+* ip_forwarding
+RFC code :  19
+Type : Bool
+
+This option specifies whether the client should configure its IP layer for packet forwarding.  A value of 0 means disable IP forwarding, and a value of 1 means enable IP forwarding.
+
+
+* nonlocal_source_routing
+RFC code : 20
+Type : Bool
+
+This option specifies whether the client should configure its IP layer to allow forwarding of datagrams with non-local source routes. A value of 0 means disallow forwarding of such datagrams, and a value of 1 means allow forwarding.
+
+* policy_filter
+RFC code : 21
+Type : Special - Multiple IP/Mask
+
+This option specifies policy filters for non-local source routing. The filters consist of a list of IP addresses and masks which specify destination/mask pairs with which to filter incoming source routes. Any source routed datagram whose next-hop address does not match one of the filters should be discarded by the client. The minimum length of this option is 8, and the length MUST be a multiple of 8.
+
+* maximum_datagram_reassembly_size
+RFC code : 22
+Type : 16-bits
+
+This option specifies the maximum size datagram that the client should be prepared to reassemble.  The size is specified as a 16-bit unsigned integer. The minimum value legal value is 576.
+
+* default_ip_time-to-live
+RFC code : 23
+Type : 8-bits unsigned int
+
+This option specifies the default time-to-live that the client should use on outgoing datagrams.  The TTL is specified as an octet with a value between 1 and 255.
+
+* path_mtu_aging_timeout
+RFC code : 24
+Type : 32-bits unsigned int
+
+
+This option specifies the timeout (in seconds) to use when aging Path MTU values discovered by the mechanism defined in RFC 1191 [12]. The timeout is specified as a 32-bit unsigned integer. 
+
+* path_mtu_plateau_table
+RFC code : 25
+Type : 16-bits unsigned integer list
+
+This option specifies a table of MTU sizes to use when performing Path MTU Discovery as defined in RFC 1191.  The table is formatted as a list of 16-bit unsigned integers, ordered from smallest to largest. The minimum MTU value cannot be smaller than 68.
+
+
+IP Layer Parameters per Interface
+=================================
+
+This section details the options that affect the operation of the IP layer on a per-interface basis.  It is expected that a client can issue multiple requests, one per interface, in order to configure interfaces with their specific parameters.
+
+* Interface MTU Option
+RFC code : 26
+Type : 16-bit unsigned integer
+
+This option specifies the MTU to use on this interface. The minimum legal value for the MTU is 68.
+
+* all_subnets_are_local
+RFC code : 27
+Type : Bool
+
+This option specifies whether or not the client may assume that all subnets of the IP network to which the client is connected use the same MTU as the subnet of that network to which the client is directly connected.  A value of 1 indicates that all subnets share the same MTU.  A value of 0 means that the client should assume that some subnets of the directly connected network may have smaller MTUs.
+
+* broadcast_address
+RFC code : 28
+Type : Single IP
+
+This option specifies the broadcast address in use on the client's subnet.
+
+* perform_mask_discovery
+RFC code : 29
+Type : Bool
+
+This option specifies whether or not the client should perform subnet mask discovery using ICMP.  A value of 0 indicates that the client should not perform mask discovery.  A value of 1 means that the client should perform mask discovery.
+
+* mask_supplier
+RFC code : 30
+Type : Bool
+
+This option specifies whether or not the client should respond to subnet mask requests using ICMP.  A value of 0 indicates that the client should not respond.  A value of 1 means that the client should respond.
+
+* perform_router_discovery
+RFC code : 31
+Type : Bool
+
+This option specifies whether or not the client should solicit routers using the Router Discovery mechanism defined in RFC 1256. A value of 0 indicates that the client should not perform router discovery.  A value of 1 means that the client should perform router discovery.
+
+* router_solicitation_address
+RFC code : 32
+Type : Single IP
+
+This option specifies the address to which the client should transmit router solicitation requests.
+* static_route
+RFC code :  33
+Type : Special - Multiple of 2 IP.
+
+This option specifies a list of static routes that the client should install in its routing cache.  If multiple routes to the same destination are specified, they are listed in descending order of priority.
+
+The routes consist of a list of IP address pairs.  The first address is the destination address, and the second address is the router for the destination.
+
+The default route (0.0.0.0) is an illegal destination for a static route.
+
+
+Link Layer Parameters per Interface
+===================================
+This section lists the options that affect the operation of the data link layer on a per-interface basis.
+
+* trailer_encapsulation
+RFC code : 34 
+Type : Bool
+
+This option specifies whether or not the client should negotiate the use of trailers (RFC 893) when using the ARP protocol.  A value of 0 indicates that the client should not attempt to use trailers.  A value of 1 means that the client should attempt to use trailers.
+
+* arp_cache_timeout
+RFC code : 35
+Type : 32-bits unsigned int
+
+This option specifies the timeout in seconds for ARP cache entries. The time is specified as a 32-bit unsigned integer.
+
+* ethernet_encapsulation
+RFC code : 36
+Type : Bool
+
+This option specifies whether or not the client should use Ethernet Version 2 (RFC 894) or IEEE 802.3 (RFC 1042) encapsulation if the interface is an Ethernet.  A value of 0 indicates that the client should use RFC 894 encapsulation.  A value of 1 means that the client should use RFC 1042 encapsulation.
+
+TCP Parameters
+==============
+This section lists the options that affect the operation of the TCP layer on a per-interface basis.
+
+* tcp_default_ttl
+RFC code : 37
+Type : 8-bits unsigned integer
+
+
+   This option specifies the default TTL that the client should use when
+   sending TCP segments. The minimum value is 1.
+
+
+* tcp_keepalive_interval
+RFC code : 38
+Type : 32-bits unsigned integer
+
+This option specifies the interval (in seconds) that the client TCP should wait before sending a keepalive message on a TCP connection. A value of zero indicates that the client should not generate keepalive messages on connections unless specifically requested by an application.
+
+* tcp_keepalive_garbage
+RFC code : 39
+Type : Bool
+
+This option specifies the whether or not the client should send TCP keepalive messages with a octet of garbage for compatibility with older implementations.  A value of 0 indicates that a garbage octet should not be sent. A value of 1 indicates that a garbage octet should be sent.
+
+
+Application and Service Parameters
+==================================
+This section details some miscellaneous options used to configure miscellaneous applications and services.
+
+* nis_domain
+RFC code : 40
+Type : String
+
+This option specifies the name of the client's NIS [17] domain. The domain is formatted as a character string consisting of characters from the NVT ASCII character set.
+
+* nis_servers
+RFC code : 41
+Type : Multiple IP
+
+This option specifies a list of IP addresses indicating NIS servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* ntp_servers
+RFC code : 42
+Type : Multiple IP
+
+This option specifies a list of IP addresses indicating NTP servers available to the client.  Servers SHOULD be listed in order of preference.
+
+
+* vendor_specific_information
+RFC code : 43
+Type : Special - n-octet
+
+This option is used by clients and servers to exchange vendor-specific information.  The information is an opaque object of N octets, presumably interpreted by vendor-specific code on the clients and servers.  The definition of this information is vendor specific. The vendor is indicated in the vendor class identifier option. Servers not equipped to interpret the vendor-specific information sent by a client MUST ignore it (although it may be reported). Clients which do not receive desired vendor-specific information SHOULD make an attempt to operate without it, although they may do so (and announce they are doing so) in a degraded mode.
+
+If a vendor potentially encodes more than one item of information in this option, then the vendor SHOULD encode the option using "Encapsulated vendor-specific options" as described below:
+
+The Encapsulated vendor-specific options field SHOULD be encoded as a sequence of code/length/value fields of identical syntax to the DHCP options field with the following exceptions:
+* There SHOULD NOT be a "magic cookie" field in the encapsulated vendor-specific extensions field.
+* Codes other than 0 or 255 MAY be redefined by the vendor within the encapsulated vendor-specific extensions field, but SHOULD conform to the tag-length-value syntax defined in section 2.
+* Code 255 (END), if present, signifies the end of the encapsulated vendor extensions, not the end of the vendor extensions field. If no code 255 is present, then the end of the enclosing vendor-specific information field is taken as the end of the encapsulated vendor-specific extensions field.
+
+* nbns
+RFC code : 44
+Type : Multiple IP
+
+The NetBIOS name server (NBNS) option specifies a list of RFC 1001/1002 NBNS name servers listed in order of preference.
+
+* nbdd
+RFC code : 45
+Type : Multiple IP
+
+The NetBIOS datagram distribution server (NBDD) option specifies a list of RFC 1001/1002 NBDD servers listed in order of preference.
+
+* nb_node_type
+RFC code : 46
+Type : special - one octet
+
+The NetBIOS node type option allows NetBIOS over TCP/IP clients which are configurable to be configured as described in RFC 1001/1002. The value is specified as a single octet which identifies the client type as follows:
+
+      Value         Node Type
+      -----         ---------
+      0x1           B-node
+      0x2           P-node
+      0x4           M-node
+      0x8           H-node
+
+In the above chart, the notation '0x' indicates a number in base-16 (hexadecimal).
+
+* nb_scope
+RFC code :47 
+Type : Special - String
+
+
+   The NetBIOS scope option specifies the NetBIOS over TCP/IP scope
+   parameter for the client as specified in RFC 1001/1002.
+
+* x_window_system_font_server
+RFC code : 48
+Type : Multiple IP
+
+This option specifies a list of X Window System [21] Font servers available to the client. Servers SHOULD be listed in order of preference.
+
+The code for this option is 48.  The minimum length of this option is 4 octets, and the length MUST be a multiple of 4.
+
+* x_window_system_display_manager
+RFC code : 49
+Type : Multiple IP
+
+This option specifies a list of IP addresses of systems that are running the X Window System Display Manager and are available to the client.
+
+Addresses SHOULD be listed in order of preference.
+
+* nis+_domain
+RFC code : 64
+Type : String
+
+This option specifies the name of the client's NIS+ [17] domain. The domain is formatted as a character string consisting of characters from the NVT ASCII character set.
+
+* nis+_servers
+RFC code : 65
+Type : Multiple IP
+
+This option specifies a list of IP addresses indicating NIS+ servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* mobile_ip_home_agent
+RFC code : 68
+Type : Special - Multiple IP
+
+This option specifies a list of IP addresses indicating mobile IP home agents available to the client.  Agents SHOULD be listed in order of preference. Its minimum length is 0 (indicating no home agents are available).
+
+* smtp_server
+RFC code : 69
+Type : Multiple IP
+
+The SMTP server option specifies a list of SMTP servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* pop3_server
+RFC code : 70
+Type : Multiple IP
+
+The POP3 server option specifies a list of POP3 available to the client.  Servers SHOULD be listed in order of preference.
+
+* nntp_server
+RFC code : 71
+Type : Multiple IP
+
+The NNTP server option specifies a list of NNTP available to the client.  Servers SHOULD be listed in order of preference.
+
+* default_www_server
+RFC code : 72
+Type : Multiple IP
+
+The WWW server option specifies a list of WWW available to the client.  Servers SHOULD be listed in order of preference.
+
+* default_finger_server
+RFC code : 73
+Type : Multiple IP
+
+The Finger server option specifies a list of Finger available to the client.  Servers SHOULD be listed in order of preference.
+
+* default_irc_server
+RFC code : 74
+Type : Multiple IP
+
+The IRC server option specifies a list of IRC available to the client.  Servers SHOULD be listed in order of preference.
+
+* streettalk_server
+RFC code : 75
+Type : Multiple IP
+
+The StreetTalk server option specifies a list of StreetTalk servers available to the client.  Servers SHOULD be listed in order of preference.
+
+* streettalk_directory_assistance_server
+RFC code : 76
+Type : Multiple IP
+
+The StreetTalk Directory Assistance (STDA) server option specifies a list of STDA servers available to the client.  Servers SHOULD be listed in order of preference.
+
+
+9. DHCP Extensions
+==================
+
+This section details the options that are specific to DHCP.
+
+* requested_ip_address
+RFC code : 50
+Type : Single IP
+
+This option is used in a client request (DHCPDISCOVER) to allow the client to request that a particular IP address be assigned.
+
+* ip_address_lease_time
+RFC code : 51
+Type : 32-bits unsigned integer
+
+This option is used in a client request (DHCPDISCOVER or DHCPREQUEST) to allow the client to request a lease time for the IP address.  In a server reply (DHCPOFFER), a DHCP server uses this option to specify the lease time it is willing to offer. The time is in units of seconds.
+
+* option_overload
+RFC code : 52
+Type : 8-bit
+
+Warning : Do not use. This option will be automagically managed by the pydhcplib.
+
+This option is used to indicate that the DHCP 'sname' or 'file' fields are being overloaded by using them to carry DHCP options. A DHCP server inserts this option if the returned parameters will exceed the usual space allotted for options.
+
+If this option is present, the client interprets the specified additional fields after it concludes interpretation of the standard option fields.
+
+Legal values for this option are:
+
+           Value   Meaning
+           -----   --------
+             1     the 'file' field is used to hold options
+             2     the 'sname' field is used to hold options
+             3     both fields are used to hold options
+
+* tftp_server_name
+RFC code : 66
+Type : String
+
+This option is used to identify a TFTP server when the 'sname' field in the DHCP header has been used for DHCP options.
+
+* bootfile_name
+RFC code : 67
+Type : String
+
+This option is used to identify a bootfile when the 'file' field in the DHCP header has been used for DHCP options.
+
+* dhcp_message_type
+RFC code : 53
+Type : Special - 8-bits
+
+This option is used to convey the type of the DHCP message. 
+Legal values for this option are:
+
+           Value   Message Type
+           -----   ------------
+             1     DHCPDISCOVER
+             2     DHCPOFFER
+             3     DHCPREQUEST
+             4     DHCPDECLINE
+             5     DHCPACK
+             6     DHCPNAK
+             7     DHCPRELEASE
+             8     DHCPINFORM
+
+* server_identifier
+RFC code : 54
+Type : Single IP
+
+This option is used in DHCPOFFER and DHCPREQUEST messages, and may optionally be included in the DHCPACK and DHCPNAK messages. DHCP servers include this option in the DHCPOFFER in order to allow the client to distinguish between lease offers.  DHCP clients use the contents of the 'server identifier' field as the destination address for any DHCP messages unicast to the DHCP server.  DHCP clients also indicate which of several lease offers is being accepted by including this option in a DHCPREQUEST message. The identifier is the IP address of the selected server.
+
+* Parameter Request List
+RFC code : 55
+Type : Special - N octets
+
+This option is used by a DHCP client to request values for specified configuration parameters.  The list of requested parameters is specified as n octets, where each octet is a valid DHCP option code as defined in this document.
+
+The client MAY list the options in order of preference.  The DHCP server is not required to return the options in the requested order, but MUST try to insert the requested options in the order requested by the client.
+
+* message
+RFC code : 56
+Type : String
+
+This option is used by a DHCP server to provide an error message to a DHCP client in a DHCPNAK message in the event of a failure. A client may use this option in a DHCPDECLINE message to indicate the why the client declined the offered parameters.  The message consists of N octets of NVT ASCII text, which the client may display on an available output device.
+
+* maximum_dhcp_message_size
+RFC code : 57
+Type : 16-bits unsigned integer
+
+This option specifies the maximum length DHCP message that it is willing to accept.  The length is specified as an unsigned 16-bit integer. A client may use the maximum DHCP message size option in DHCPDISCOVER or DHCPREQUEST messages, but should not use the option in DHCPDECLINE messages.
+The minimum legal value is 576 octets.
+
+* renewal_time_value
+RFC code : 58
+Type : 32-bits unsigned integer
+
+This option specifies the time interval from address assignment until the client transitions to the RENEWING state.
+
+The value is in units of seconds, and is specified as a 32-bit unsigned integer.
+
+* rebinding_time_value
+RFC code : 59
+Type : 32-bits unsigned integer
+
+This option specifies the time interval from address assignment until the client transitions to the REBINDING state.
+
+* vendor_class_identifier
+RFC code : 60
+Type : String
+
+This option is used by DHCP clients to optionally identify the vendor type and configuration of a DHCP client.  The information is a string of n octets, interpreted by servers.  Vendors may choose to define specific vendor class identifiers to convey particular configuration or other identification information about a client. For example, the identifier may encode the client's hardware configuration.  Servers not equipped to interpret the class-specific information sent by a client MUST ignore it (although it may be reported). Servers that respond SHOULD only use option 43 to return the vendor-specific information to the client.
+
+* client_identifier
+RFC code : 61
+Type : Special
+
+This option is used by DHCP clients to specify their unique identifier.  DHCP servers use this value to index their database of address bindings.  This value is expected to be unique for all clients in an administrative domain.
+
+Identifiers SHOULD be treated as opaque objects by DHCP servers.
+
+The client identifier MAY consist of type-value pairs similar to the 'htype'/'chaddr' fields. For instance, it MAY consist of a hardware type and hardware address. In this case the type field SHOULD be one of the ARP hardware types defined in STD2. A hardware type of 0 (zero) should be used when the value field contains an identifier other than a hardware address (e.g. a fully qualified domain name).
+
+For correct identification of clients, each client's client-identifier MUST be unique among the client-identifiers used on the subnet to which the client is attached. Vendors and system administrators are responsible for choosing client-identifiers that meet this requirement for uniqueness.

@@ -1,0 +1,15 @@
+* Options should be available in list or directly in string form
+* Server_identifier is not correctly set for selecting state
+* Write test scripts
+* Better exception handling
+* Docs
+* Package for various systems
+* Add directory type for dhcp_file_io (multiple file IO support)
+* Change interface to linux_interface and search for *BSD management
+* Add a packet.SetTextOption for textual data handling
+* Handle Maximum DHCP Message Size (option 57)
+* Handle Overload (option 52)
+
+OK * Use recvfrom instead of recv to store source IP of the received packet.
+OK * Do simple SetParameter in dhcp_packet class to read human readable data (look at anemon server code)
+OK * Finish import class

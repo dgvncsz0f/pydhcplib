@@ -1,0 +1,285 @@
+#!/usr/bin/python
+# pydhcplib
+# Copyright (C) 2008 Mathieu Ignacio -- mignacio@april.org
+#
+# This file is part of pydhcplib.
+# Pydhcplib is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+from pydhcplib import dhcp_constants
+from pydhcplib import dhcp_packet
+from pydhcplib import dhcp_network
+from pydhcplib import dhcp_file_io
+from pydhcplib import type_hwmac
+from pydhcplib import type_ipv4
+from pydhcplib import type_strlist
+from pydhcplib import interface
+
+import sys
+
+from optparse import OptionParser
+
+
+parser = OptionParser()
+
+""" Action options """
+parser.add_option("-c", "--count", action="store",dest="count", help="Exact count of dhcp packets to be processed.", default="0", type="int")
+parser.add_option("-v", "--version", action="store_true",dest="version", help="Get pydhcplib and pydhcp version.", default=False)
+parser.add_option("-o", "--output", action="store",dest="output", help="\"<TYPE>;<OPTIONS>;<NAME>\"", default=False)
+parser.add_option("-i", "--input", action="store",dest="input", help="\"<TYPE>;<OPTIONS>;<NAME>\"", default=False)
+
+
+
+(options, args) = parser.parse_args()
+
+def print_error(_msg) :
+    return sys.stderr.write(_msg+"\n")
+
+def main() :
+    listener = False
+    emitter = False
+
+    port_destination = False
+    ip_destination = False
+
+    
+    if options.version == True :
+        print "PyDhcpLib version : ",dhcp_constants.PyDhcpLibVersion
+        sys.exit(0)
+
+    # process input command line
+    if options.input != False :
+        options.input = process_inline_options(options.input)
+        listener = process_input(options.input,options.count)
+    else :
+        print_error ("Warning : no input option defined. Default is *stdin* with option *binary*.")
+        listener = dhcp_file_io.DhcpStdIn()
+        
+    # process output command line
+    if options.output != False :
+        options.output = process_inline_options(options.output)
+        emitter = process_output(options.output,options.count)
+        ip_destination = options.output[2]
+        port_destination = options.output[3]
+    else :
+        print_error ("Warning : no output option defined. Default is *stdout* with option *binary*.")
+        emitter = dhcp_file_io.DhcpStdOut()
+        
+    # Last check before processing
+    if ( not emitter ) : return False
+    if ( not listener ) : return False
+        
+    # Go ! Process dhcp packet
+    count = options.count
+
+    if not options.input or options.input[0] == 'file' or options.input[0] == 'stdin' :
+        count = 1
+    if not options.output or options.output[0] == 'file' or options.output[0] == 'stdout' :
+        count = 1
+
+    gap = 0
+    if count != 0 : gap = 1
+    else : count = 1
+
+    while count > 0 :
+        packet = listener.GetNextDhcpPacket()
+        emitter.SendDhcpPacketTo(packet,ip_destination,port_destination)
+        count -= gap
+
+    return True
+
+def process_input(_input,_count) :
+    if not _input :
+        print_error( "process_input_error" )
+        return false
+
+    option_up = False
+    option_binary = False
+    listener = False
+    file_in = False
+    if not _count : _count = 0
+
+    for option in _input[1] :
+        if (option == 'binary') :
+            option_binary = True
+        if (option == 'up') :
+            option_up = True
+
+    _type = _input[0]
+    _location = _input[2]
+    _port = _input[3]
+    
+    if (_type == 'device') :
+        if not option_binary : print_error ("Warning : option *readable* has no effect for types *device* and *address*")
+        if option_up :
+            print_error ("Setting interface "+_location+" up.)")
+            check_device(_location,options.no_up)
+        listener = dhcp_network.DhcpClient(_location,_port,_port)
+        listener.BindToDevice()
+        return listener
+    
+    elif (_type == 'address') :
+        if option_up : print_error ("Warning : option *up* has effect only for type *device* ")
+        if not option_binary : print_error ("Warning : option *readable* has no effect for types *device* and *address*")
+        listener = dhcp_network.DhcpClient(_location,_port,_port)
+        listener.BindToAddress()
+        return listener
+
+    elif (_type == 'file') :
+        if option_up : print_error ("Warning : option *up* has effect only for type *device* ")
+        if option_binary and _count !=1 : print_error ("Warning : option *count* is always 1 for type *file*")
+        listener = dhcp_file_io.DhcpFileIn(_location)
+        if not option_binary : listener.DisableBinaryTransport()
+        return listener
+
+    elif(_type == 'stdin') :
+        if option_up : print_error ("Warning : option *up* has effect only for type *device* ")
+        listener = dhcp_file_io.DhcpStdIn()
+        listener.DisableBinaryTransport()
+        return listener
+
+
+def process_output(_output,_count) :
+    if not _output :
+        print_error( "process_output_error" )
+        return false
+
+    option_up = False
+    option_binary = False
+    listener = False
+    file_in = False
+    if not _count : _count = 0
+
+    for option in _output[1] :
+        if (option == 'binary') :
+            option_binary = True
+        if (option == 'up') :
+            option_up = True
+
+    _type = _output[0]
+    _location = _output[2]
+    _port = _output[3]
+    
+    if (_type == 'device') :
+        print_error('Warning : type *device* not available for output. Send data to stdout with option *binary*')
+        emitter = dhcp_file_io.DhcpStdOut()
+        emitter.EnableBinaryTransport()
+        return emitter
+    
+    elif (_type == 'address') :
+        if option_up : print_error ("Warning : option *up* has effect only for type *device* ")
+        if not option_binary : print_error ("Warning : option *readable* has no effect for types *device* and *address*")
+        emitter = dhcp_network.DhcpNetwork(_location,_port,_port)
+        return emitter
+
+    elif (_type == 'file') :
+        if option_up : print_error ("Warning : option *up* has effect only for type *device* ")
+        if option_binary and _count !=1 : print_error ("Warning : option *count* is always 1 for type *file*")
+        emitter = dhcp_file_io.DhcpFileOut(_location)
+
+        if not option_binary : emitter.DisableBinaryTransport()
+        else : emitter.EnableBinaryTransport()
+
+        return emitter
+
+    elif(_type == 'stdout') :
+        if option_up : print_error ("Warning : option *up* has effect only for type *device* ")
+        emitter = dhcp_file_io.DhcpStdOut()
+        emitter.DisableBinaryTransport()
+        return emitter
+
+def check_device(device_name,_up) :
+    device = interface.interface()
+
+    # Set UP interface if no_up option not present
+    if _up : device.setStatusUp(device_name)
+
+    # test if interface exists
+    all_devices = device.getInterfaceList()
+    valid = 0
+
+    for each in all_devices :
+        if each == device_name : valid += 1
+    if valid == 0 : print_error( "Warning : no configured device - "+device_name+" - found." )
+
+
+def process_inline_options(definition) :
+    type_list = ['device','address','file','stdin','stdout']
+    options_list = ['readable','binary','up','noup']
+    input_split = definition.split(';')
+
+    # Test the number of field in device definition
+    if (len(input_split) > 3) :
+        print_error( "Error : too many fields in device definition" )
+        return False
+    elif (len(input_split) < 3) :
+        print_error( "Error : not enough fields in device description" )
+        return False
+
+
+    # Get and test _type_ field
+    input_type = input_split[0]
+    try: type_list.index(input_type)
+    except ValueError:
+        print_error( "Error : unknown type <"+input_type+"> (device, address, file, input, or output)")
+        return False
+
+
+    # Get an test options field
+    input_options = input_split[1].split('|')
+
+    if (len(input_options[0]) == 0) : input_options = []
+    mutual_up = 0
+    readable_up = 0
+    for each in input_options :
+        try: options_list.index(each)
+        except ValueError:
+            print_error( "Error : unknown option <"+each+"> (readable, binary, up, or noup)")
+            return False
+        if each == 'up' : mutual_up += 1
+        if each == 'noup' : mutual_up += 1
+        if each == 'readable' : readable_up += 1
+        if each == 'binary' : readable_up += 1
+    if ( mutual_up > 1) :
+        print_error( "Error : <up> and <noup> are mutualy exclusive.")
+        return False
+    if ( readable_up > 1) :
+        print_error( "Error : <readable> and <binary> are mutualy exclusive." )
+        return False
+
+    # Get name and port
+    if input_type=='device' or input_type=='address' :
+        try : 
+            input_name = input_split[2]
+            input_tmp = input_name.split(':')
+            input_name = input_tmp[0]
+            input_port = input_tmp[1]
+        except : 
+            if input_type=='device' : print_error( "Error : wrong name field. Example : eth0:68" )
+            if input_type=='address' : print_error( "Error : wrong name field. Example : 192.168.8.5:68" )
+            return False
+    elif input_type=='file' :
+        input_name = input_split[2]
+        input_port = ''
+    else :
+        input_name = ''
+        input_port = ''
+
+    return [input_type,input_options,input_name,input_port]
+
+try :
+    if main() : sys.exit(0)
+    sys.exit(1)
+except KeyboardInterrupt :
+    print_error("Exiting pydhcp");
+    sys.exit(1)
