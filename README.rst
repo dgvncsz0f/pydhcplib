@@ -15,6 +15,8 @@
 Pydhcplib is a python library to read/write and encode/decode dhcp
 packet on network.
 
+N.B. This is a fork of this project http://pydhcplib.tuxfamily.org/pmwiki/. The only change [so far] is the implementation of a missing feature as described in the end of this document [1_].
+
 Installation :
 ==============
 
@@ -34,6 +36,8 @@ Look in the examples directory to learn how to use the modules.::
   $ man pydhcp
   $ man pydhcplib
 
+.. 1:
+
 iG contribution:
 ================
 
@@ -47,3 +51,4 @@ unicasting the udp packet to the `yiaddr` address, which does not yet
 exist. Using the kernel to send the packet fails as there is no ARP
 information available.  This requires using raw sockets to inject the
 missing `hwaddr` information.
+
