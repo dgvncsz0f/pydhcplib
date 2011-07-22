@@ -169,6 +169,7 @@ def process_output(_output,_count) :
     _type = _output[0]
     _location = _output[2]
     _port = _output[3]
+    _iface = _output[4]
     
     if (_type == 'device') :
         print_error('Warning : type *device* not available for output. Send data to stdout with option *binary*')
@@ -179,7 +180,8 @@ def process_output(_output,_count) :
     elif (_type == 'address') :
         if option_up : print_error ("Warning : option *up* has effect only for type *device* ")
         if not option_binary : print_error ("Warning : option *readable* has no effect for types *device* and *address*")
-        emitter = dhcp_network.DhcpNetwork(_location,_port,_port)
+        check_device(_iface,False)
+        emitter = dhcp_network.DhcpNetwork(_iface,_location,_port,_port)
         return emitter
 
     elif (_type == 'file') :
@@ -264,18 +266,24 @@ def process_inline_options(definition) :
             input_tmp = input_name.split(':')
             input_name = input_tmp[0]
             input_port = input_tmp[1]
+            if input_type=="address":
+              input_iface = input_tmp[2]
+            else:
+              input_iface = input_name
         except : 
             if input_type=='device' : print_error( "Error : wrong name field. Example : eth0:68" )
-            if input_type=='address' : print_error( "Error : wrong name field. Example : 192.168.8.5:68" )
+            if input_type=='address' : print_error( "Error : wrong name field. Example : 192.168.8.5:68:eth0" )
             return False
     elif input_type=='file' :
         input_name = input_split[2]
         input_port = ''
+        input_iface = ""
     else :
         input_name = ''
         input_port = ''
+        input_iface = ""
 
-    return [input_type,input_options,input_name,input_port]
+    return [input_type,input_options,input_name,input_port,input_iface]
 
 try :
     if main() : sys.exit(0)

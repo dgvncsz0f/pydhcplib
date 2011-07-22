@@ -44,6 +44,6 @@ amazing] *busybox* project changing it to work with the udp payload
 This was required to make it work in the case the fields `giaddr` and
 `ciaddr` are zero and the broadcast bit flag is not set. This requires
 unicasting the udp packet to the `yiaddr` address, which does not yet
-exist. Using the kernel to send the packet fails as there is not ARP
+exist. Using the kernel to send the packet fails as there is no ARP
 information available.  This requires using raw sockets to inject the
 missing `hwaddr` information.

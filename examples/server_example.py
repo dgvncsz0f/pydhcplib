@@ -22,14 +22,19 @@ from pydhcplib.dhcp_network import *
 
 
 netopt = {'client_listen_port':"68",
-           'server_listen_port':"67",
-           'listen_address':"0.0.0.0"}
+          'iface': 'eth0',
+          'server_listen_port':"67",
+          'listen_address':"0.0.0.0"
+         }
 
 class Server(DhcpServer):
     def __init__(self, options):
-        DhcpServer.__init__(self,options["listen_address"],
+        DhcpServer.__init__(self,
+                            options["iface"],
+                            options["listen_address"],
                             options["client_listen_port"],
-                            options["server_listen_port"])
+                            options["server_listen_port"]
+                           )
         
     def HandleDhcpDiscover(self, packet):
 	print packet.str()        
