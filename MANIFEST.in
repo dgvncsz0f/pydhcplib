@@ -1,1 +1,4 @@
 include networking/*.h
+include man/man8/*
+include man/man3/*
+include man/fr/man3/*
