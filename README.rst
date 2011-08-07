@@ -38,10 +38,10 @@ Look in the examples directory to learn how to use the modules.::
 
 .. 1:
 
-iG contribution:
-================
+my [=dsouza] contribution:
+==========================
 
-The short story is we've "stolen" the udp raw socket code from [the
+The short story is I've "stolen" the udp raw socket code from [the
 amazing] *busybox* project changing it to work with the udp payload
 [the actual dhcp packet] this library creates.
 
