@@ -38,8 +38,8 @@ Look in the examples directory to learn how to use the modules.::
 
 .. 1:
 
-Differences from the original pydhcplib
-=======================================
+Differences to the original pydhcplib
+=====================================
 
 The short story is I've "stolen" the udp raw socket code from [the
 amazing] *busybox* project changing it to work with the udp payload
