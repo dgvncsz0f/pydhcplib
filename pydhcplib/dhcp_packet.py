@@ -303,7 +303,7 @@ class DhcpPacket(DhcpBasicPacket):
         self.SetOption("flags",src.GetOption("flags"))
         self.SetOption("giaddr",src.GetOption("giaddr"))
         self.SetOption("chaddr",src.GetOption("chaddr"))
-        self.SetOption("ip_address_lease_time_option",src.GetOption("ip_address_lease_time_option"))
+        self.SetOption("ip_address_lease_time",src.GetOption("ip_address_lease_time"))
         self.TransformToDhcpAckPacket()
 
     def TransformToDhcpAckPacket(self): # src = request or inform packet
@@ -338,7 +338,7 @@ class DhcpPacket(DhcpBasicPacket):
         self.DeleteOption("sname")
         self.DeleteOption("file")
         self.DeleteOption("request_ip_address")
-        self.DeleteOption("ip_address_lease_time_option")
+        self.DeleteOption("ip_address_lease_time")
         self.DeleteOption("parameter_request_list")
         self.DeleteOption("client_identifier")
         self.DeleteOption("maximum_message_size")
