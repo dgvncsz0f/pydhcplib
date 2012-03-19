@@ -132,11 +132,13 @@ class DhcpNetwork:
 
         if (giaddr != "0.0.0.0"):
             self.SendDhcpPacketTo(response, giaddr, self.listen_port)
+        elif (response.IsDhcpNackPacket()):
+            self.SendDhcpPacketTo(response, "255.255.255.255", self.emit_port)
         elif (ciaddr != "0.0.0.0"):
             self.SendDhcpPacketTo(response, ciaddr, self.emit_port)
         elif (broadcast):
             self.SendDhcpPacketTo(response, "255.255.255.255", self.emit_port)
-        else:
+        else: # unicast to yiaddr
             ifconfig = interface.interface()
             ifindex  = ifconfig.getIndex(self.ifname)
             ifaddr   = ifconfig.getAddr(self.ifname)
