@@ -69,7 +69,7 @@ class DhcpNetwork:
 
     def BindToDevice(self) :
         try :
-            self.dhcp_socket.setsockopt(socket.SOL_SOCKET,IN.SO_BINDTODEVICE,self.listen_address+'\0')
+            self.dhcp_socket.setsockopt(socket.SOL_SOCKET,IN.SO_BINDTODEVICE,self.ifname)
         except socket.error, msg :
             sys.stderr.write ('pydhcplib.DhcpNetwork.BindToDevice error in setsockopt SO_BINDTODEVICE : '+str(msg))
 
@@ -191,7 +191,7 @@ class DhcpNetwork:
 
 
 class DhcpServer(DhcpNetwork) :
-    def __init__(self, ifname, listen_address="0.0.0.0", client_listen_port=68,server_listen_port=67) :
+    def __init__(self, ifname,listen_address="0.0.0.0",client_listen_port=68,server_listen_port=67) :
         
         DhcpNetwork.__init__(self,ifname,listen_address,server_listen_port,client_listen_port)
 
@@ -231,7 +231,7 @@ class DhcpClientOld(DhcpNetwork) :
 
     def BindToDevice(self) :
         try :
-            self.dhcp_socket.setsockopt(socket.SOL_SOCKET,IN.SO_BINDTODEVICE,self.listen_address+'\0')
+            self.dhcp_socket.setsockopt(socket.SOL_SOCKET,IN.SO_BINDTODEVICE,self.ifname)
         except socket.error, msg :
             sys.stderr.write( 'pydhcplib.DhcpClient socket error in setsockopt SO_BINDTODEVICE : '+str(msg))
 
