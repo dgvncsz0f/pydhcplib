@@ -9,6 +9,7 @@
 * Add a packet.SetTextOption for textual data handling
 * Handle Maximum DHCP Message Size (option 57)
 * Handle Overload (option 52)
+* using recvmsg + IP_PKTINFO/cmsg to figure the interface of the UDP packet
 
 OK * Use recvfrom instead of recv to store source IP of the received packet.
 OK * Do simple SetParameter in dhcp_packet class to read human readable data (look at anemon server code)
