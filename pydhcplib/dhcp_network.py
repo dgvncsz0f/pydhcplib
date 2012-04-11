@@ -37,23 +37,26 @@ class DhcpNetwork:
         self.dhcp_socket    = None
         
     # Networking stuff
-    def CreateSocket(self) :
+    def CreateSocket(self, so_broadcast, so_reuseaddr) :
+        dhcp_socket = None
         try :
-            self.dhcp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            dhcp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         except socket.error, msg :
             sys.stderr.write('pydhcplib.DhcpNetwork socket creation error : '+str(msg))
 
         try :
-            if self.so_broadcast :
-                self.dhcp_socket.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
+            if so_broadcast :
+                dhcp_socket.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
         except socket.error, msg :
             sys.stderr.write('pydhcplib.DhcpNetwork socket error in setsockopt SO_BROADCAST : '+str(msg))
 
         try : 
-            if self.so_reuseaddr :
-                self.dhcp_socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+            if so_reuseaddr :
+                dhcp_socket.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
         except socket.error, msg :
             sys.stderr.write('pydhcplib.DhcpNetwork socket error in setsockopt SO_REUSEADDR : '+str(msg))
+
+        return dhcp_socket
         
     def EnableReuseaddr(self) :
         self.so_reuseaddr = True
@@ -198,7 +201,7 @@ class DhcpServer(DhcpNetwork) :
         self.EnableBroadcast()
         self.DisableReuseaddr()
 
-        self.CreateSocket()
+        self.dhcp_socket = self.CreateSocket(self.so_broadcast, self.so_reuseaddr)
         self.BindToAddress()
 
 class DhcpClient(DhcpNetwork) :
@@ -209,7 +212,7 @@ class DhcpClient(DhcpNetwork) :
         self.EnableBroadcast()
         self.EnableReuseaddr()
 
-        self.CreateSocket()
+        self.dhcp_socket = self.CreateSocket(self.so_broadcast, self.so_reuseaddr)
 
 
 class DhcpClientOld(DhcpNetwork) :
