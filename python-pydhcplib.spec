@@ -1,5 +1,6 @@
 %define __python python2.6
 %define __pyver 2.6
+%define debug_package %{nil}
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print (get_python_lib())")}
 
 Name:           python-pydhcplib
@@ -13,7 +14,6 @@ URL:            http://code.locaweb.com.br/iaas/motoko
 Source0:        pydhcplib-%{version}.tar.gz
 Buildroot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildArch:      noarch
 BuildRequires:  python
 
 Requires:       python
@@ -22,7 +22,7 @@ Requires:       python
 Pydhcplib is a python library to read/write and encode/decode dhcp packet on network.
 
 %prep
-%setup -q -n pydhcplib
+%setup -q -n pydhcplib-%{version}
 
 %build
 echo -n
