@@ -145,6 +145,8 @@ class DhcpNetwork:
             ifconfig = interface.interface()
             ifindex  = ifconfig.getIndex(self.ifname)
             ifaddr   = ifconfig.getAddr(self.ifname)
+            if (ifaddr is None):
+                ifaddr = "0.0.0.0"
             _rawsocket.udp_send_packet( response.EncodePacket(),
                                         type_ipv4.ipv4(ifaddr).int(),
                                         self.listen_port,
