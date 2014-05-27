@@ -97,12 +97,14 @@ class interface:
     def getAddr(self, ifname):
         """ Get the inet addr for an interface """
         result = self._call(ifname, self.SIOCGIFADDR)
-        return socket.inet_ntoa(result[20:24])
+        if (result is not None):
+            return socket.inet_ntoa(result[20:24])
 
     def getNetmask(self, ifname):
         """ Get the netmask for an interface """
         result = self._call(ifname, self.SIOCGIFNETMASK)
-        return socket.inet_ntoa(result[20:24])
+        if (result is not None):
+            return socket.inet_ntoa(result[20:24])
 
     def getIndex(self, ifname):
         """ Get the ifindex for an interface """
