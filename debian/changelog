@@ -1,0 +1,5 @@
+python-dhcplib (0.0.1-1) unstable; urgency=low
+
+  * Initial debian package files
+
+ -- Rodrigo Sampaio Vaz <rodrigo.vaz@gmail.com>  Sun, 04 Mar 2012 16:28:42 +0000
