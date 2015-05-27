@@ -21,11 +21,10 @@ from pydhcplib.dhcp_packet import *
 from pydhcplib.dhcp_network import *
 
 
-netopt = {'client_listen_port':"68",
+netopt = {'client_listen_port': "68",
           'iface': 'eth0',
-          'server_listen_port':"67",
-          'listen_address':"0.0.0.0"
-         }
+          'server_listen_port': "67",
+          'listen_address': "0.0.0.0"}
 
 class Server(DhcpServer):
     def __init__(self, options):
@@ -33,22 +32,24 @@ class Server(DhcpServer):
                             options["iface"],
                             options["listen_address"],
                             options["client_listen_port"],
-                            options["server_listen_port"]
-                           )
+                            options["server_listen_port"])
         
     def HandleDhcpDiscover(self, packet):
-	print packet.str()        
-    def HandleDhcpRequest(self, packet):
-	print packet.str()
-    def HandleDhcpDecline(self, packet):
-	print packet.str()        
-    def HandleDhcpRelease(self, packet):
-	print packet.str()        
-    def HandleDhcpInform(self, packet):
-	print packet.str()
+        print(packet.str())
 
+    def HandleDhcpRequest(self, packet):
+        print(packet.str())
+
+    def HandleDhcpDecline(self, packet):
+        print(packet.str())
+
+    def HandleDhcpRelease(self, packet):
+        print(packet.str())
+
+    def HandleDhcpInform(self, packet):
+        print(packet.str())
 
 server = Server(netopt)
 
-while True :
+while True:
     server.GetNextDhcpPacket()

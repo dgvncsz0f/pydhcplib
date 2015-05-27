@@ -15,51 +15,50 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-class strlist :
-    def __init__(self,data="") :
+class strlist(object):
+    def __init__(self, data=""):
         str_type = type(data)
         self._str = ""
         self._list = []
-        
-        if str_type == str :
+
+        if str_type == str:
             self._str = data
-            for each in range(len(self._str)) :
+            for each in range(len(self._str)):
                 self._list.append(ord(self._str[each]))
-        elif str_type == list :
+        elif str_type == list:
             self._list = data
-            self._str = "".join(map(chr,self._list))
-        else : raise TypeError , 'strlist init : Valid types are str and  list of int'
+            self._str = "".join(map(chr, self._list))
+        else:
+            raise TypeError('strlist init : Valid types '
+                            'are str and list of int')
 
     # return string
-    def str(self) :
+    def str(self):
         return self._str
 
     # return list (useful for DhcpPacket class)
-    def list(self) :
+    def list(self):
         return self._list
 
     # return int
     # FIXME
-    def int(self) :
+    def int(self):
         return 0
-
-
 
     """ Useful function for native python operations """
 
-    def __hash__(self) :
+    def __hash__(self):
         return self._str.__hash__()
 
-    def __repr__(self) :
+    def __repr__(self):
         return self._str
 
-    def __nonzero__(self) :
-        if self._str != "" : return 1
+    def __nonzero__(self):
+        if self._str != "":
+            return 1
         return 0
 
-    def __cmp__(self,other) :
-        if self._str == other : return 0
+    def __cmp__(self, other):
+        if self._str == other:
+            return 0
         return 1
-		    
-
-
