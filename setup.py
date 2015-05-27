@@ -16,7 +16,7 @@ en3_manpages = ['man/man3/pydhcplib.strlist.3.gz',
 en8_manpages = ['man/man8/pydhcp.8.gz']
 
 setup(name='pydhcplib',
-      version="0.6.2",
+      version="0.7",
       license="GPL v3",
       description="Dhcp client/server library",
       author="Mathieu Ignacio, Diego Souza",
