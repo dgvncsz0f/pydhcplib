@@ -15,11 +15,6 @@ en3_manpages = ['man/man3/pydhcplib.strlist.3.gz',
                 'man/man3/pydhcplib.ipv4.3.gz']
 en8_manpages = ['man/man8/pydhcp.8.gz']
 
-rawsocketmod = Extension("pydhcplib._rawsocket",
-                         sources=["networking/rawsocket.c",
-                                  "networking/rawsocketmod.c"]
-                         )
-
 setup(name='pydhcplib',
       version="0.6.2",
       license="GPL v3",
@@ -29,7 +24,6 @@ setup(name='pydhcplib',
       url="http://github.com/dgvncsz0f/pydhcplib",
       packages=["pydhcplib"],
       scripts=["scripts/pydhcp"],
-      ext_modules=[rawsocketmod],
       data_files=[("share/man/man8", en8_manpages),
                   #            ("share/man/fr/man8",fr8_manpages),
                   ("share/man/fr/man3", fr3_manpages),
