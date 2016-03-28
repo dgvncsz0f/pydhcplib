@@ -28,6 +28,12 @@ on the `setup.py` command line like this::
 
   $ ./setup.py install --prefix=/rootpath/to/your/location/
 
+Creating egg :
+==============
+
+  use virtualenv with correct python version
+  $ python setup.py bdist_egg
+
 How to use pydhcplib :
 ======================
 
