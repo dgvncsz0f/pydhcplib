@@ -18,6 +18,7 @@
 
 from binascii import unhexlify, hexlify
 
+
 # Check and convert hardware/nic/mac address type
 class hwmac:
     def __init__(self, value="00:00:00:00:00:00"):
@@ -74,9 +75,11 @@ class hwmac:
         return self._hw_string
 
     def __cmp__(self, other):
-        if self._hw_string == other: return 0
+        if self._hw_string == other:
+            return 0
         return 1
 
     def __nonzero__(self):
-        if self._hw_string != "00:00:00:00:00:00": return 1
+        if self._hw_string != "00:00:00:00:00:00":
+            return 1
         return 0

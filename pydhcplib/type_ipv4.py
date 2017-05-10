@@ -58,8 +58,8 @@ class ipv4(object):
     def _StringToLong(self):
         ip_numlist = [int(v) for v in self._ip_string.split('.')]
         self._ip_long = ip_numlist[3] + ip_numlist[2] * 256 + \
-                        ip_numlist[1] * 256 * 256 + \
-                        ip_numlist[0] * 256 * 256 * 256
+            ip_numlist[1] * 256 * 256 + \
+            ip_numlist[0] * 256 * 256 * 256
         if not self.CheckNumList(self._ip_numlist):
             raise ValueError("ipv4 list argument is not an valid ip ")
 

@@ -18,9 +18,10 @@
 import sys
 from struct import unpack
 from struct import pack
-from pydhcplib.dhcp_constants import *
+from pydhcplib.dhcp_constants import MagicCookie, DhcpFields, DhcpOptions, DhcpOptionsTypes, DhcpOptionsList
 
 # DhcpPacket : base class to encode/decode dhcp packets.
+
 
 class DhcpBasicPacket(object):
     def __init__(self):
@@ -92,7 +93,7 @@ class DhcpBasicPacket(object):
 
             # fields_specs : {'option_code':fixed_length,minimum_length,multiple}
             # if fixed_length == 0 : minimum_length and multiple apply
-            # else : forget minimum_length and multiple 
+            # else : forget minimum_length and multiple
             # multiple : length MUST be a multiple of 'multiple'
             # FIXME : this definition should'nt be in dhcp_constants ?
             fields_specs = {"ipv4": [4, 0, 1], "ipv4+": [0, 4, 4],

@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-from pydhcplib.dhcp_basic_packet import *
-from pydhcplib.dhcp_constants import *
+from pydhcplib.dhcp_basic_packet import DhcpBasicPacket
+from pydhcplib.dhcp_constants import DhcpFields, DhcpFieldsName, DhcpFieldsTypes, DhcpOptions, DhcpOptionsTypes, DhcpOptionsList, DhcpNames
 from pydhcplib.type_ipv4 import ipv4
 from pydhcplib.type_strlist import strlist
 from pydhcplib.type_hwmac import hwmac
@@ -24,7 +24,7 @@ from pydhcplib.type_hwmac import hwmac
 
 class DhcpPacket(DhcpBasicPacket):
     def str(self):
-        # Process headers : 
+        # Process headers :
         printable_data = "# Header fields\n"
 
         op = self.packet_data[
@@ -65,7 +65,7 @@ class DhcpPacket(DhcpBasicPacket):
 
             printable_data += opt + " : " + result + "\n"
 
-        # Process options : 
+        # Process options :
         printable_data += "# Options fields\n"
 
         for opt in self.options_data.keys():
@@ -244,9 +244,9 @@ class DhcpPacket(DhcpBasicPacket):
 
     # Test Packet Type
     def IsDhcpSomethingPacket(self, type):
-        if self.IsDhcpPacket() == False:
+        if self.IsDhcpPacket() is False:
             return False
-        if self.IsOption("dhcp_message_type") == False:
+        if self.IsOption("dhcp_message_type") is False:
             return False
         if self.GetOption("dhcp_message_type") != type:
             return False

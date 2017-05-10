@@ -35,7 +35,7 @@ class interface:
     SIOCSIFNETMASK = 0x891c  # set network PA mask
     SIOCGIFINDEX = 0x8933  # if_index mapping
 
-    # From <net/if.h>    
+    # From <net/if.h>
 
     IFF_UP = 0x1  # Interface is up.
     IFF_BROADCAST = 0x2  # Broadcast address valid.

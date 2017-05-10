@@ -1,2 +1,8 @@
+# temp python files
 *.pyc
 __pycache__
+
+# setup.py work dirs
+build
+dist
+pydhcplib.egg-info
