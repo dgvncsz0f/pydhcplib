@@ -13,4 +13,4 @@ packet.SetOption("router",ipv4("192.168.0.1").list()+[6,4,2,1])
 packet.SetOption("time_server",[100,100,100,7,6,4,2,1])
 packet.SetOption("yiaddr",[192,168,0,18])
 
-print packet.str()
+print(packet.str())

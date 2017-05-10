@@ -16,70 +16,67 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from binascii import unhexlify,hexlify
+from binascii import unhexlify, hexlify
 
 # Check and convert hardware/nic/mac address type
 class hwmac:
-    def __init__(self,value="00:00:00:00:00:00") :
+    def __init__(self, value="00:00:00:00:00:00"):
         self._hw_numlist = []
         self._hw_string = ""
         hw_type = type(value)
-        if hw_type == str :
+        if hw_type == str:
             value = value.strip()
             self._hw_string = value
             self._StringToNumlist(value)
             self._CheckNumList()
-        elif hw_type == list :
+        elif hw_type == list:
             self._hw_numlist = value
             self._CheckNumList()
             self._NumlistToString()
-        else : raise TypeError , 'hwmac init : Valid types are str and list'
-
-
+        else:
+            raise TypeError('hwmac init : Valid types are str and list')
 
     # Check if _hw_numlist is valid and raise error if not.
-    def _CheckNumList(self) :
-        if len(self._hw_numlist) != 6 : raise ValueError , "hwmac : wrong list length."
-        for part in self._hw_numlist :
-            if type (part) != int : raise TypeError , "hwmac : each element of list must be int"
-            if part < 0 or part > 255 : raise ValueError , "hwmac : need numbers between 0 and 255."
+    def _CheckNumList(self):
+        if len(self._hw_numlist) != 6:
+            raise ValueError("hwmac : wrong list length.")
+        for part in self._hw_numlist:
+            if type(part) != int:
+                raise TypeError("hwmac : each element of list must be int")
+            if part < 0 or part > 255:
+                raise ValueError("hwmac : need numbers between 0 and 255.")
         return True
 
-
-    def _StringToNumlist(self,value):
-        self._hw_string = self._hw_string.replace("-",":").replace(".",":")
+    def _StringToNumlist(self, value):
+        self._hw_string = self._hw_string.replace("-", ":").replace(".", ":")
         self._hw_string = self._hw_string.lower()
 
         for twochar in self._hw_string.split(":"):
             self._hw_numlist.append(ord(unhexlify(twochar)))
-            
+
     # Convert NumList type ip to String type ip
-    def _NumlistToString(self) :
-        self._hw_string = ":".join(map(hexlify,map(chr,self._hw_numlist)))
+    def _NumlistToString(self):
+        self._hw_string = ":".join(map(hexlify, map(chr, self._hw_numlist)))
 
     # Convert String type ip to NumList type ip
     # return ip string
-    def str(self) :
+    def str(self):
         return self._hw_string
 
     # return ip list (useful for DhcpPacket class)
-    def list(self) :
+    def list(self):
         return self._hw_numlist
 
-    def __hash__(self) :
+    def __hash__(self):
         return self._hw_string.__hash__()
 
-    def __repr__(self) :
+    def __repr__(self):
         return self._hw_string
 
-    def __cmp__(self,other) :
-        if self._hw_string == other : return 0
+    def __cmp__(self, other):
+        if self._hw_string == other: return 0
         return 1
 
-    def __nonzero__(self) :
-        if self._hw_string != "00:00:00:00:00:00" : return 1
+    def __nonzero__(self):
+        if self._hw_string != "00:00:00:00:00:00": return 1
         return 0
-
-
-
-

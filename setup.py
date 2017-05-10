@@ -1,6 +1,6 @@
-#!/usr/bin/env python2.5
+#!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 from distutils.core import Extension
 
 fr8_manpages = ['man/fr/man8/pydhcp.8.gz']
@@ -20,7 +20,7 @@ rawsocketmod = Extension( "pydhcplib._rawsocket",
                         )
 
 setup(name='pydhcplib',
-      version      = "0.7.0",
+      version      = "0.6.2",
       license      = "GPL v3",
       description  = "Dhcp client/server library",
       author       = "Mathieu Ignacio, Diego Souza",
