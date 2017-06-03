@@ -19,8 +19,9 @@ import sys
 from pydhcplib import dhcp_packet
 
 
-class DhcpFileIO(object):
+class DhcpFileIO():
     def __init__(self):
+        super().__init__()
         self.binary = False
         self.filedesc = False
 
@@ -53,23 +54,27 @@ class DhcpFileIO(object):
 
 class DhcpStdIn(DhcpFileIO):
     def __init__(self):
+        super().__init__()
         self.EnableBinaryTransport()
         self.filedesc = sys.stdin
 
 
 class DhcpStdOut(DhcpFileIO):
     def __init__(self):
+        super().__init__()
         self.EnableBinaryTransport()
         self.filedesc = sys.stdout
 
 
 class DhcpFileOut(DhcpFileIO):
     def __init__(self, filename):
+        super().__init__()
         self.filedesc = open(filename, 'w')
         self.EnableBinaryTransport()
 
 
 class DhcpFileIn(DhcpFileIO):
     def __init__(self, filename):
+        super().__init__()
         self.filedesc = open(filename, 'r')
         self.EnableBinaryTransport()

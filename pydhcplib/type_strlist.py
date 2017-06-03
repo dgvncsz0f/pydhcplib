@@ -16,8 +16,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-class strlist(object):
+class strlist():
     def __init__(self, data=""):
+        super().__init__()
         str_type = type(data)
         self._str = ""
         self._list = []

@@ -23,8 +23,9 @@ from pydhcplib.dhcp_constants import MagicCookie, DhcpFields, DhcpOptions, DhcpO
 # DhcpPacket : base class to encode/decode dhcp packets.
 
 
-class DhcpBasicPacket(object):
+class DhcpBasicPacket():
     def __init__(self):
+        super().__init__()
         self.packet_data = [0] * 240
         self.options_data = {}
         self.packet_data[236:240] = MagicCookie

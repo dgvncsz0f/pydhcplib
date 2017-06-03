@@ -16,12 +16,13 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
-from binascii import unhexlify, hexlify
+from binascii import unhexlify
 
 
 # Check and convert hardware/nic/mac address type
-class hwmac:
+class hwmac():
     def __init__(self, value="00:00:00:00:00:00"):
+        super().__init__()
         self._hw_numlist = []
         self._hw_string = ""
         hw_type = type(value)
@@ -57,7 +58,7 @@ class hwmac:
 
     # Convert NumList type ip to String type ip
     def _NumlistToString(self):
-        self._hw_string = ":".join(map(hexlify, map(chr, self._hw_numlist)))
+        self._hw_string = ':'.join( [ '{0:02x}'.format( i ) for i in self._hw_numlist ] )
 
     # Convert String type ip to NumList type ip
     # return ip string

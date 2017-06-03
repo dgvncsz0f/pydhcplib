@@ -17,8 +17,9 @@
 
 
 # Check and convert ipv4 address type
-class ipv4(object):
+class ipv4():
     def __init__(self, value="0.0.0.0"):
+        super().__init__()
         ip_type = type(value)
         if ip_type == str:
             if not self.CheckString(value):

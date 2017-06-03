@@ -18,16 +18,15 @@
 import sys
 import socket
 import select
-import dhcp_packet
-import interface
 import struct
-import _rawsocket
-import type_ipv4
 import IN
 
+from pydhcplib import dhcp_packet, type_ipv4, interface, _rawsocket
 
-class DhcpNetwork:
+
+class DhcpNetwork():
     def __init__(self, ifname, listen_address="0.0.0.0", listen_port=67, emit_port=68):
+        super().__init__()
         self.ifname = ifname
         self.listen_port = int(listen_port)
         self.emit_port = int(emit_port)
@@ -196,8 +195,7 @@ class DhcpNetwork:
 
 class DhcpServer(DhcpNetwork):
     def __init__(self, ifname, listen_address="0.0.0.0", client_listen_port=68, server_listen_port=67):
-
-        DhcpNetwork.__init__(self, ifname, listen_address, server_listen_port, client_listen_port)
+        super().__init__(ifname, listen_address, server_listen_port, client_listen_port)
 
         self.EnableBroadcast()
         self.DisableReuseaddr()
@@ -208,8 +206,7 @@ class DhcpServer(DhcpNetwork):
 
 class DhcpClient(DhcpNetwork):
     def __init__(self, ifname=None, listen_address="0.0.0.0", client_listen_port=68, server_listen_port=67):
-
-        DhcpNetwork.__init__(self, ifname, listen_address, client_listen_port, server_listen_port)
+        super().__init__(ifname, listen_address, client_listen_port, server_listen_port)
 
         self.EnableBroadcast()
         self.EnableReuseaddr()
