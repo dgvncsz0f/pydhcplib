@@ -79,19 +79,19 @@ class interface:
     def getInterfaceList(self):
         """ Get all interface names in a list """
         # get interface list
-        buffer = array.array('c', '\0' * 1024)
+        buffer = array.array('B', b'\0' * 1024)
         ifconf = struct.pack("iP", buffer.buffer_info()[1],
                              buffer.buffer_info()[0])
         result = self._ioctl(self.SIOCGIFCONF, ifconf)
+        size, ptr = struct.unpack("iP", result)
+        if ptr != buffer.buffer_info()[0]:
+          raise Exception( 'getInterfaceList Buffer moved, egad!' )
 
         # loop over interface names
         iflist = []
-        size, ptr = struct.unpack("iP", result)
-        for idx in range(0, size, 32):
-            ifconf = buffer.tostring()[idx:idx + 32]
-            name, dummy = struct.unpack("16s16s", ifconf)
-            name, dummy = name.split('\0', 1)
-            iflist.append(name)
+        for i in range(0, size, 40):  # we really should be using the struct ifconf from net/if.h, hopfully it dosen't change, for kernel 4.4 ifconf is 40 bytes
+            name = struct.unpack("16s", buffer[ i:i + 16 ] )[0].decode().strip( '\0' )
+            iflist.append( name )
 
         return iflist
 

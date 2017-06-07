@@ -41,9 +41,9 @@ class DhcpPacket(DhcpBasicPacket):
             if DhcpFieldsTypes[opt] == "int":
                 result = str(data[0])
             elif DhcpFieldsTypes[opt] == "int2":
-                result = str(data[0] * 256 + data[1])
+                result = str( ( data[0] << 8 ) + data[1] )
             elif DhcpFieldsTypes[opt] == "int4":
-                result = str(ipv4(data).int())
+                result = str( ( data[0] << 24 ) + ( data[1] << 16 ) + ( data[2] << 8 ) + data[3] )
             elif DhcpFieldsTypes[opt] == "str":
                 for each in data:
                     if each != 0:
@@ -58,7 +58,7 @@ class DhcpPacket(DhcpBasicPacket):
                 hexsym = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
                           'b', 'c', 'd', 'e', 'f']
                 for iterator in range(6):
-                    result += [str(hexsym[data[iterator] / 16] + hexsym[
+                    result += [str(hexsym[int(data[iterator] / 16)] + hexsym[
                         data[iterator] % 16])]
 
                 result = ':'.join(result)
@@ -77,9 +77,9 @@ class DhcpPacket(DhcpBasicPacket):
             elif DhcpOptionsTypes[optnum] == "char":
                 result = str(data[0])
             elif DhcpOptionsTypes[optnum] == "16-bits":
-                result = str(data[0] * 256 + data[0])
+                result = str( ( data[0] << 8 ) + data[1] )
             elif DhcpOptionsTypes[optnum] == "32-bits":
-                result = str(ipv4(data).int())
+                result = str( ( data[0] << 24 ) + ( data[1] << 16 ) + ( data[2] << 8 ) + data[3] )
             elif DhcpOptionsTypes[optnum] == "string":
                 for each in data:
                     if each != 0:

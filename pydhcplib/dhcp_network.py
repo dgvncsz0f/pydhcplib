@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 import socket
 import select
 import struct
@@ -41,19 +40,19 @@ class DhcpNetwork():
         try:
             dhcp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         except socket.error as msg:
-            sys.stderr.write('pydhcplib.DhcpNetwork socket creation error : ' + str(msg))
+            raise Exception( 'pydhcplib.DhcpNetwork socket creation error : ' + str(msg) )
 
         try:
             if so_broadcast:
                 dhcp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         except socket.error as msg:
-            sys.stderr.write('pydhcplib.DhcpNetwork socket error in setsockopt SO_BROADCAST : ' + str(msg))
+            raise Exception('pydhcplib.DhcpNetwork socket error in setsockopt SO_BROADCAST : ' + str(msg))
 
         try:
             if so_reuseaddr:
                 dhcp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         except socket.error as msg:
-            sys.stderr.write('pydhcplib.DhcpNetwork socket error in setsockopt SO_REUSEADDR : ' + str(msg))
+            raise Exception('pydhcplib.DhcpNetwork socket error in setsockopt SO_REUSEADDR : ' + str(msg))
 
         return dhcp_socket
 
@@ -73,18 +72,18 @@ class DhcpNetwork():
         try:
             self.dhcp_socket.setsockopt(socket.SOL_SOCKET, IN.SO_BINDTODEVICE, self.ifname)
         except socket.error as msg:
-            sys.stderr.write( 'pydhcplib.DhcpNetwork.BindToDevice error in setsockopt SO_BINDTODEVICE : ' + str(msg))
+            raise Exception( 'pydhcplib.DhcpNetwork.BindToDevice error in setsockopt SO_BINDTODEVICE : ' + str(msg))
 
         try:
             self.dhcp_socket.bind(('', self.listen_port))
         except socket.error as msg:
-            sys.stderr.write( 'pydhcplib.DhcpNetwork.BindToDevice error : ' + str(msg))
+            raise Exception( 'pydhcplib.DhcpNetwork.BindToDevice error : ' + str(msg))
 
     def BindToAddress(self):
         try:
             self.dhcp_socket.bind((self.listen_address, self.listen_port))
         except socket.error as msg:
-            sys.stderr.write( 'pydhcplib.DhcpNetwork.BindToAddress error : ' + str(msg))
+            raise Exception( 'pydhcplib.DhcpNetwork.BindToAddress error : ' + str(msg))
 
     def GetNextDhcpPacket(self, timeout=60):
         data = ""
@@ -129,24 +128,47 @@ class DhcpNetwork():
     def SendDhcpPacket(self, request, response):
         giaddr = ".".join(map(str, request.GetOption("giaddr")))
         ciaddr = ".".join(map(str, request.GetOption("ciaddr")))
-        yiaddr = ".".join(map(str, response.GetOption("yiaddr")))
-        chaddr = struct.pack(6 * "B", *request.GetOption("chaddr")[0:6])
-        broadcast = request.GetOption("flags")[0] != 0
+        broadcast = ( request.GetOption("flags")[0] & 0x80 ) != 0
 
-        if (giaddr != "0.0.0.0"):
-            self.SendDhcpPacketTo(response, giaddr, self.listen_port)
-        elif (response.IsDhcpNackPacket()):
-            self.SendDhcpPacketTo(response, "255.255.255.255", self.emit_port)
-        elif (ciaddr != "0.0.0.0"):
-            self.SendDhcpPacketTo(response, ciaddr, self.emit_port)
-        elif (broadcast):
-            self.SendDhcpPacketTo(response, "255.255.255.255", self.emit_port)
-        else:  # unicast to yiaddr
+        if ( giaddr != "0.0.0.0" ):
+            self.SendDhcpPacketTo( response, giaddr, self.listen_port )
+
+        elif ( response.IsDhcpNackPacket() ):
+            self.SendDhcpPacketTo( response, "255.255.255.255", self.emit_port)
+
+        elif ( ciaddr != "0.0.0.0" ):
+            self.SendDhcpPacketTo( response, ciaddr, self.emit_port )
+
+        elif broadcast:
+            #self.SendDhcpPacketTo( response, "255.255.255.255", self.emit_port )
+
+            chaddr = struct.pack( 6 * "B", *request.GetOption("chaddr")[0:6] )
+
             ifconfig = interface.interface()
             ifindex = ifconfig.getIndex(self.ifname)
             ifaddr = ifconfig.getAddr(self.ifname)
             if (ifaddr is None):
                 ifaddr = "0.0.0.0"
+
+            _rawsocket.udp_send_packet( response.EncodePacket(),
+                                        type_ipv4.ipv4(ifaddr).int(),
+                                        self.listen_port,
+                                        type_ipv4.ipv4("255.255.255.255").int(),
+                                        self.emit_port,
+                                        chaddr,
+                                        ifindex
+                                        )
+
+        else:  # unicast to yiaddr
+            yiaddr = ".".join(map(str, response.GetOption("yiaddr")))
+            chaddr = struct.pack( 6 * "B", *request.GetOption("chaddr")[0:6] )
+
+            ifconfig = interface.interface()
+            ifindex = ifconfig.getIndex(self.ifname)
+            ifaddr = ifconfig.getAddr(self.ifname)
+            if (ifaddr is None):
+                ifaddr = "0.0.0.0"
+
             _rawsocket.udp_send_packet( response.EncodePacket(),
                                         type_ipv4.ipv4(ifaddr).int(),
                                         self.listen_port,
@@ -157,7 +179,7 @@ class DhcpNetwork():
                                         )
 
     def SendDhcpPacketTo(self, packet, _ip, _port):
-        return self.dhcp_socket.sendto(packet.EncodePacket(), (_ip, _port))
+        return self.dhcp_socket.sendto( packet.EncodePacket(), ( _ip, _port ) )
 
     # Server side Handle methods
     def HandleDhcpDiscover(self, packet):
