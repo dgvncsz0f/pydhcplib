@@ -20,6 +20,7 @@ from pydhcplib.dhcp_constants import DhcpFields, DhcpFieldsName, DhcpFieldsTypes
 from pydhcplib.type_ipv4 import ipv4
 from pydhcplib.type_strlist import strlist
 from pydhcplib.type_hwmac import hwmac
+from pydhcplib.type_rfc3046 import rfc3046
 
 
 class DhcpPacket(DhcpBasicPacket):
@@ -98,6 +99,9 @@ class DhcpPacket(DhcpBasicPacket):
                     result = ','.join([DhcpOptionsList[each] for each in data])
                 else:
                     result += str(data)
+
+            elif DhcpOptionsTypes[optnum] == "RFC3046":
+                result = rfc3046(data).str()
 
             printable_data += opt + " : " + result + "\n"
 

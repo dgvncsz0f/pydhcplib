@@ -102,7 +102,7 @@ class DhcpBasicPacket():
                             "char": [1, 0, 1], "16-bits": [2, 0, 1],
                             "32-bits": [4, 0, 1], "identifier": [0, 2, 1],
                             "RFC3397": [0, 4, 1], "none": [0, 0, 1],
-                            "char+": [0, 1, 1]
+                            "char+": [0, 1, 1], "RFC3046":[1, 0, 1]
                             }
 
             specs = fields_specs[DhcpOptionsTypes[DhcpOptions[name]]]
@@ -140,6 +140,8 @@ class DhcpBasicPacket():
             order[DhcpOptions[each]] += self.options_data[each]
 
         options = []
+        options += (order[53]) # put message type first for compatibility with wattcp
+        del order[53]
 
         for each in sorted(order.keys()):
             options += (order[each])
