@@ -207,9 +207,9 @@ class DhcpServer(DhcpNetwork) :
         self.BindToAddress()
 
 class DhcpClient(DhcpNetwork) :
-    def __init__(self, listen_address="0.0.0.0", client_listen_port=68,server_listen_port=67) :
+    def __init__(self, ifname=None, listen_address="0.0.0.0", client_listen_port=68,server_listen_port=67) :
         
-        DhcpNetwork.__init__(self,None,listen_address,client_listen_port,server_listen_port)
+        DhcpNetwork.__init__(self,ifname,listen_address,client_listen_port,server_listen_port)
 
         self.EnableBroadcast()
         self.EnableReuseaddr()
