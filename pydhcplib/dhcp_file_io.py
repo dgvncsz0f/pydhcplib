@@ -16,55 +16,65 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-import dhcp_packet
-import IN
+from pydhcplib import dhcp_packet
 
-class DhcpFileIO() :
-    def __init__(self) :
+
+class DhcpFileIO():
+    def __init__(self):
+        super().__init__()
         self.binary = False
         self.filedesc = False
 
-    def EnableBinaryTransport(self) :
+    def EnableBinaryTransport(self):
         self.binary = True
 
-    def DisableBinaryTransport(self) :
+    def DisableBinaryTransport(self):
         self.binary = False
-    
-    def SendDhcpPacketTo(self,packet,forgetthisparameter1=None,forgetthisparameter2=None) :
-        if self.filedesc and self.binary :
+
+    def SendDhcpPacketTo(self, packet, forgetthisparameter1=None,
+                         forgetthisparameter2=None):
+        if self.filedesc and self.binary:
             self.filedesc.write(packet.EncodePacket())
-        elif self.filedesc and not self.binary :
+        elif self.filedesc and not self.binary:
             self.filedesc.write(packet.str())
 
-    def GetNextDhcpPacket(self) :
-        if self.filedesc and self.binary :
+    def GetNextDhcpPacket(self):
+        if self.filedesc and self.binary:
             packet = dhcp_packet.DhcpPacket()
             data = self.filedesc.read(4096)
             packet.DecodePacket(data)
             return packet
 
-        elif self.filedesc and not self.binary :
+        elif self.filedesc and not self.binary:
             packet = dhcp_packet.DhcpPacket()
-            for line in self.filedesc : packet.AddLine(line)
+            for line in self.filedesc:
+                packet.AddLine(line)
             return packet
 
 
-class DhcpStdIn(DhcpFileIO) :
-    def __init__(self) :
+class DhcpStdIn(DhcpFileIO):
+    def __init__(self):
+        super().__init__()
         self.EnableBinaryTransport()
         self.filedesc = sys.stdin
 
-class DhcpStdOut(DhcpFileIO) :
-    def __init__(self) :
+
+class DhcpStdOut(DhcpFileIO):
+    def __init__(self):
+        super().__init__()
         self.EnableBinaryTransport()
         self.filedesc = sys.stdout
 
-class DhcpFileOut(DhcpFileIO) :
-    def __init__(self,filename) :
-        self.filedesc = file(filename, 'w')
+
+class DhcpFileOut(DhcpFileIO):
+    def __init__(self, filename):
+        super().__init__()
+        self.filedesc = open(filename, 'w')
         self.EnableBinaryTransport()
 
-class DhcpFileIn(DhcpFileIO) :
-    def __init__(self,filename) :
-        self.filedesc = file(filename, 'r')
+
+class DhcpFileIn(DhcpFileIO):
+    def __init__(self, filename):
+        super().__init__()
+        self.filedesc = open(filename, 'r')
         self.EnableBinaryTransport()

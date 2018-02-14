@@ -1,9 +1,9 @@
 /* Copyright (c) 2011, Diego Souza                                                 */
 /* All rights reserved.                                                            */
-                                                                                   
+
 /* Redistribution and use in source and binary forms, with or without              */
 /* modification, are permitted provided that the following conditions are met:     */
-                                                                                   
+
 /*   * Redistributions of source code must retain the above copyright notice,      */
 /*     this list of conditions and the following disclaimer.                       */
 /*   * Redistributions in binary form must reproduce the above copyright notice,   */
@@ -25,12 +25,13 @@
 /* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.            */
 
 #include <Python.h>
+
 #include "rawsocket.h"
 
 static
 PyObject *python_rawsocket_udp_send_packet(PyObject *self, PyObject *args);
 
-static 
+static
 PyMethodDef rawsocket_methods[] = {
   {"udp_send_packet",  python_rawsocket_udp_send_packet, METH_VARARGS, "Sends an udp packet using raw socket"},
   {NULL, NULL, 0, NULL}
@@ -52,7 +53,7 @@ PyObject *python_rawsocket_udp_send_packet(PyObject *self, PyObject *args)
     Py_RETURN_FALSE;
 
   int result = rawsocket_udp_send_packet( (const uint8_t*) payload,
-                                          payloadlen, 
+                                          payloadlen,
                                           (uint32_t) source_nip,
                                           (uint32_t) source_port,
                                           (uint32_t) dest_nip,
@@ -66,8 +67,30 @@ PyObject *python_rawsocket_udp_send_packet(PyObject *self, PyObject *args)
     Py_RETURN_FALSE;
 }
 
+#if PY_MAJOR_VERSION == 2
+
 PyMODINIT_FUNC
 init_rawsocket(void)
 {
   (void) Py_InitModule("_rawsocket", rawsocket_methods);
 }
+
+#endif
+
+#if PY_MAJOR_VERSION == 3
+
+static struct PyModuleDef cModPyDem =
+{
+    PyModuleDef_HEAD_INIT,
+    "_rawsocket", /* name of module */
+    "",          /* module documentation, may be NULL */
+    -1,          /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+    rawsocket_methods
+};
+
+PyMODINIT_FUNC PyInit__rawsocket(void)
+{
+    return PyModule_Create(&cModPyDem);
+}
+
+#endif
