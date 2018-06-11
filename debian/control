@@ -1,15 +1,16 @@
-Source: python-dhcplib
+Source: pydhcplib
 Section: python
 Priority: extra
 Maintainer: Rodrigo Sampaio Vaz <rodrigo.vaz@gmail.com>
-Build-Depends: debhelper (>= 7.0.50~)
-Standards-Version: 3.8.4
+Build-Depends: debhelper (>= 9), python3 (>= 3.4), python3-dev (>=3.4), python3-setuptools (>= 20.0)
 Homepage: http://github.com/dsouza/pydhcplib
+Standards-Version: 3.8.4
+X-Python3-Version: >= 3.4
 
-Package: python-dhcplib
+Package: python3-dhcplib
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: python3 (>= 3.4), ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Description: python dhcp server and client lib
  Pydhcplib is a python library to read/write and encode/decode dhcp packet on network.
-
+ .
  N.B. This is a fork of this project http://pydhcplib.tuxfamily.org/pmwiki/. The only change [so far] is the implementation of a missing feature as described in the end of this document
