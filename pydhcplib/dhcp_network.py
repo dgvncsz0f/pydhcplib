@@ -18,7 +18,9 @@
 import socket
 import select
 import struct
-import IN
+
+# from asm-generic/socket.h
+SO_BINDTODEVICE = 25
 
 from pydhcplib import dhcp_packet, type_ipv4, interface, _rawsocket
 
@@ -70,7 +72,7 @@ class DhcpNetwork():
 
     def BindToDevice(self):
         try:
-            self.dhcp_socket.setsockopt(socket.SOL_SOCKET, IN.SO_BINDTODEVICE, self.ifname)
+            self.dhcp_socket.setsockopt(socket.SOL_SOCKET, SO_BINDTODEVICE, self.ifname)
         except socket.error as msg:
             raise Exception( 'pydhcplib.DhcpNetwork.BindToDevice error in setsockopt SO_BINDTODEVICE : ' + str(msg))
 
