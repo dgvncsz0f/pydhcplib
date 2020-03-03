@@ -21,7 +21,7 @@ Installation :
 ==============
 
 On Debian, simply run `./setup.py install`. Python modules will be
-installed in /usr/lib/python2.X/site-packages/pydhcplib/.
+installed in /usr/lib/python3.X/site-packages/pydhcplib/.
 
 If you want to install it on a different location, use the `--prefix`
 on the `setup.py` command line like this::
