@@ -106,6 +106,9 @@ class DhcpBasicPacket():
                             }
 
             specs = fields_specs[DhcpOptionsTypes[DhcpOptions[name]]]
+            if isinstance(value, map): # make old python2.x code compatible with python3.x
+                value = list(value)
+
             length = len(value)
             if (specs[0] != 0 and specs == length) or (
                     specs[1] <= length and length % specs[2] == 0):
