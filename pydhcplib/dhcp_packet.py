@@ -89,8 +89,6 @@ class DhcpPacket(DhcpBasicPacket):
                         break
 
             elif DhcpOptionsTypes[optnum] == "ipv4":
-                print(type(data))
-                print(data)
                 result = ipv4(data).str()
             elif DhcpOptionsTypes[optnum] == "ipv4+":
                 for i in range(0, len(data), 4):
