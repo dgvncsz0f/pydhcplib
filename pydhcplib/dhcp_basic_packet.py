@@ -106,7 +106,9 @@ class DhcpBasicPacket():
                             }
 
             specs = fields_specs[DhcpOptionsTypes[DhcpOptions[name]]]
-            if isinstance(value, map): # make old python2.x code compatible with python3.x
+
+            # in python 2.x the "map" function returned list, but in python 3.x it returns instance of the "map" class
+            if isinstance(value, map):
                 value = list(value)
 
             length = len(value)
