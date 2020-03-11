@@ -1,3 +1,9 @@
+pydhcplib (0.7.2-2) bionic; urgency=medium
+
+  * python3 from fix from uskovboris
+
+ -- Peter Howe <pnhowe@gmail.com>  Wed, 11 Mar 2020 09:25:24 -0600
+
 pydhcplib (0.7.1-1) UNSTABLE; urgency=medium
 
   * fix for working on python 3.6
