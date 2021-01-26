@@ -132,6 +132,30 @@ class DhcpNetwork():
         ciaddr = ".".join(map(str, request.GetOption("ciaddr")))
         broadcast = ( request.GetOption("flags")[0] & 0x80 ) != 0
 
+        # RFC2131 from section 4.1:
+        # If the ’giaddr’ field in a DHCP message from a client is non-zero,
+        # the server sends any return messages to the ’DHCP server’ port on the
+        # BOOTP relay agent whose address appears in ’giaddr’. If the ’giaddr’
+        # field is zero and the ’ciaddr’ field is nonzero, then the server
+        # unicasts DHCPOFFER and DHCPACK messages to the address in ’ciaddr’.
+        # If ’giaddr’ is zero and ’ciaddr’ is zero, and the broadcast bit is
+        # set, then the server broadcasts DHCPOFFER and DHCPACK messages to
+        # 0xffffffff. If the broadcast bit is not set and ’giaddr’ is zero and
+        # ’ciaddr’ is zero, then the server unicasts DHCPOFFER and DHCPACK
+        # messages to the client’s hardware address and ’yiaddr’ address.  In
+        # all cases, when ’giaddr’ is zero, the server broadcasts any DHCPNAK
+        # messages to 0xffffffff.
+        #
+        # however some dhcp relay programs ( notably dhcp-helper:simon@thekelleys.org.uk
+        # and isc-dhcp-relay) set the giaddr to the ip of the interface on
+        # which it recieved the broadcast, in some cases that ip is non routable
+        # from where the dhcp server is (ie: behind a NAT).  I think cisco's dhcp
+        # relay can be setup to send from the interface facing the server (in ciso
+        # terms the dhcp-helper)
+        #
+        # one solution, at lease for opnsense is to make a static route on the dhcp
+        # server to the dhcp relay's front facing ip.
+
         if ( giaddr != "0.0.0.0" ):
             self.SendDhcpPacketTo( response, giaddr, self.listen_port )
 
