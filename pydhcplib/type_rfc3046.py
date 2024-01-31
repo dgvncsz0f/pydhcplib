@@ -91,8 +91,9 @@ class rfc3046:
               if self.misc[0] in ( ' ', '-' ):
                 self.misc = self.misc[ 1: ]
 
-            else:
-              raise Exception( 'Unknown other sublen format: "{0}"'.format( id ) )
+            else:  # vyos/isc-dhcp-relay just puts in the interface it was recieved on ie: eth1.102
+              self.misc = id  # catch everything else -
+              # raise Exception( 'Unknown other sublen format: "{0}"'.format( id ) )
 
           # another unknown format that seems to come from cisco Circuit-ID :  00:00:16:00:00:XX
           # Have been unable to figure out what switch is putting it on, and what it means, so we are punting, firt 3 bytes -> slot  last 3 byts -> port
