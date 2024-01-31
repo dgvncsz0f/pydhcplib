@@ -15,18 +15,30 @@
 Pydhcplib is a python library to read/write and encode/decode dhcp
 packet on network.
 
-N.B. This is a fork of this project http://pydhcplib.tuxfamily.org/pmwiki/. The only change [so far] is the implementation of a missing feature as described in the end of this document [1_].
+N.B. This is a fork of this project http://pydhcplib.tuxfamily.org/pmwiki/.
+The changes are mostly a port to python3, addition of option 82(rfc3046) parsing, 
+packaging work, some code readability cleanup, a few minor bug fixes, and
+the implementation of a missing feature as described in the end of this document [1_].
 
 Installation :
 ==============
 
 On Debian, simply run `./setup.py install`. Python modules will be
-installed in /usr/lib/python2.X/site-packages/pydhcplib/.
+installed in /usr/lib/python3.X/site-packages/pydhcplib/.
 
 If you want to install it on a different location, use the `--prefix`
 on the `setup.py` command line like this::
 
   $ ./setup.py install --prefix=/rootpath/to/your/location/
+
+There is also a PPA with pre-build debian packages for a few distros
+at: https://launchpad.net/~pnhowe/+archive/ubuntu/t3kton
+
+Creating egg :
+==============
+
+  use virtualenv with correct python version
+  $ python setup.py bdist_egg
 
 How to use pydhcplib :
 ======================

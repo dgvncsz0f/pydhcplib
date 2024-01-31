@@ -1,4 +1,23 @@
-python-dhcplib (0.0.1-1) unstable; urgency=low
+pydhcplib (0.7.2-2) focal; urgency=medium
+
+  * python3 from fix from uskovboris
+
+ -- Peter Howe <pnhowe@gmail.com>  Wed, 11 Mar 2020 09:25:24 -0600
+
+pydhcplib (0.7.1-1) UNSTABLE; urgency=medium
+
+  * fix for working on python 3.6
+
+ -- Peter Howe <pnhowe@gmail.com>  Mon, 04 Nov 2019 21:07:46 -0700
+
+pydhcplib (0.7.0-1) unstable; urgency=medium
+
+  * Updated Packaging
+  * See github for additional changes
+
+ -- Peter Howe <pnhowe@gmail.com>  Mon, 11 Jun 2018 14:37:23 -0600
+
+pydhcplib (0.0.1-1) unstable; urgency=low
 
   * Initial debian package files
 
